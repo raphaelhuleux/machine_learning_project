@@ -488,10 +488,13 @@ G <- data.frame(cate_cf) %>% # replace cate_cf with the name of your predictions
 df <- data.frame(Y=Y2, W2, D, G, p)
 
 Wnames <- paste(colnames(W2), collapse="+")
+fml <- paste("Y ~ ",Wnames)
+model <- lm(fml, df, weights = 1/(p*(1-p))) 
+keep_var <- rownames(na.omit(data.frame(model$coefficients)))
+keep_var <- keep_var[!keep_var %in% "(Intercept)"]
+Wnames <- paste(keep_var, collapse="+")
 fml <- paste("Y ~ -1 + ",Wnames,"+ D:G")
 model <- lm(fml, df, weights = 1/(p*(1-p))) 
-
-
 return(model) 
 }
 
